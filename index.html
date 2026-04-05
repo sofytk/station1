@@ -3,84 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Квест: Станция «Люди Науки»</title>
+    <title>Квест: Станция «Музыкальная» (кабинет мастеров)</title>
     <style>
         * {
             box-sizing: border-box;
-            user-select: none; /* небольшая защита от копирования текста, но не мешает кликам */
+            user-select: none;
         }
         body {
-            background: linear-gradient(145deg, #1a3c2c 0%, #0e2a1d 100%);
+            background: linear-gradient(135deg, #1e2a3a 0%, #0f1a24 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', 'Roboto', 'Merriweather', serif;
+            font-family: 'Segoe UI', 'Roboto', 'Trebuchet MS', sans-serif;
             margin: 0;
             padding: 20px;
         }
-        /* основной контейнер */
         .quiz-container {
-            max-width: 850px;
+            max-width: 900px;
             width: 100%;
-            background: #fef7e0;
-            background-image: radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.1) 2%, transparent 2.5%);
-            background-size: 28px 28px;
-            border-radius: 64px 48px 64px 48px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 200, 0.6);
+            background: #fffaf0;
+            background-image: radial-gradient(circle at 0% 30%, rgba(255, 215, 150, 0.2) 2%, transparent 2.5%);
+            background-size: 30px 30px;
+            border-radius: 56px 40px 56px 40px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 245, 200, 0.8);
             overflow: hidden;
-            transition: all 0.2s;
         }
-        /* шапка с таймером и счётом */
         .quiz-header {
-            background: #2b2b1f;
+            background: #2c2118;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             flex-wrap: wrap;
             gap: 12px;
-            border-bottom: 4px solid #e0b354;
+            border-bottom: 4px solid #e0a84b;
         }
         .score-box {
-            background: #00000070;
+            background: #00000060;
             backdrop-filter: blur(4px);
             padding: 8px 18px;
             border-radius: 100px;
-            color: #ffecb3;
+            color: #ffefcf;
             font-weight: bold;
             font-size: 1.5rem;
             font-family: monospace;
-            letter-spacing: 1px;
         }
         .score-box span {
-            color: #ffd966;
+            color: #ffc857;
             font-size: 2rem;
             font-weight: 800;
             margin-right: 5px;
         }
         .timer-box {
-            background: #1e2a1c;
+            background: #1e2a2a;
             padding: 8px 20px;
             border-radius: 60px;
             font-family: 'Courier New', monospace;
             font-weight: bold;
             font-size: 1.7rem;
-            color: #f3c26b;
-            text-shadow: 0 0 4px #ae7c2e;
+            color: #f3bc6b;
+            text-shadow: 0 0 4px #9b6a2c;
             box-shadow: inset 0 0 6px #00000033, 0 4px 8px rgba(0,0,0,0.2);
         }
         .timer-box.warning {
-            background: #6b2e1a;
-            color: #ffbe8c;
+            background: #7a2e1f;
+            color: #ffcd94;
             animation: pulse 1s infinite;
         }
         @keyframes pulse {
-            0% { opacity: 1; text-shadow: 0 0 0px red; }
-            50% { opacity: 0.9; text-shadow: 0 0 3px #ff7b2c; background: #8f3a1f;}
+            0% { opacity: 1; text-shadow: 0 0 0px #ff884d; }
+            50% { opacity: 0.9; background: #9e3e28; text-shadow: 0 0 3px #ffb347; }
             100% { opacity: 1; }
         }
-        /* область вопроса */
         .question-area {
             padding: 2rem 2rem 1.5rem;
         }
@@ -88,15 +83,14 @@
             font-size: 1.5rem;
             line-height: 1.4;
             font-weight: 600;
-            color: #2c2b1f;
+            color: #2e2b1f;
             margin-bottom: 2rem;
-            background: #fff3df;
-            padding: 1.2rem;
+            background: #fff5e6;
+            padding: 1.3rem;
             border-radius: 40px;
-            box-shadow: inset 0 1px 5px #c0a16b30, 0 6px 12px rgba(0,0,0,0.08);
-            border-left: 12px solid #d9a13b;
+            box-shadow: inset 0 1px 5px #c0a16b30, 0 6px 14px rgba(0,0,0,0.08);
+            border-left: 12px solid #e09d3e;
         }
-        /* варианты ответов */
         .options-list {
             display: flex;
             flex-direction: column;
@@ -104,8 +98,8 @@
             margin-bottom: 30px;
         }
         .option-btn {
-            background: #f5ede1;
-            border: 2px solid #c7a86b;
+            background: #efe2cf;
+            border: 2px solid #c28a4a;
             border-radius: 60px;
             padding: 14px 24px;
             font-size: 1.1rem;
@@ -113,29 +107,27 @@
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #2d2b20;
+            color: #2c281e;
             font-family: inherit;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .option-btn:hover:not(:disabled) {
-            background: #eedfa8;
+            background: #ffecb3;
             transform: scale(0.98);
-            border-color: #b37b2e;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #b56f2a;
         }
-        .option-btn.disabled-true, .option-btn:disabled {
+        .option-btn:disabled {
             cursor: default;
             opacity: 0.7;
-            background: #dbceb5;
-            border-color: #9b7c4d;
+            background: #cfbea3;
+            border-color: #9b784a;
         }
-        /* финальный экран */
         .result-screen {
             padding: 2rem;
             text-align: center;
         }
         .result-box {
-            background: #d9caa3;
+            background: #e3d2b0;
             border-radius: 48px;
             padding: 2rem;
             margin: 1rem 0;
@@ -143,15 +135,15 @@
         .final-score {
             font-size: 3.2rem;
             font-weight: bold;
-            background: #2e2a1f;
+            background: #2f2a1e;
             display: inline-block;
             padding: 0.2rem 1.8rem;
             border-radius: 60px;
-            color: #ffdfa5;
+            color: #ffe2a4;
             margin: 20px 0;
         }
         .restart-btn {
-            background: #3f6b3a;
+            background: #4a6b3c;
             border: none;
             font-size: 1.2rem;
             padding: 12px 32px;
@@ -161,26 +153,30 @@
             cursor: pointer;
             margin-top: 20px;
             transition: 0.2s;
-            box-shadow: 0 6px 0 #1f3a1c;
+            box-shadow: 0 6px 0 #2c4522;
         }
         .restart-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 2px 0 #1f3a1c;
+            box-shadow: 0 2px 0 #2c4522;
         }
         .message {
             font-size: 1rem;
-            background: #e9ddb0;
+            background: #f1e5ca;
             border-radius: 30px;
             padding: 10px;
             margin-top: 15px;
-            color: #4c3516;
+            color: #4a3516;
+            text-align: center;
         }
         footer {
             font-size: 0.75rem;
             text-align: center;
-            background: #2b2b1f;
-            color: #bbaa7a;
-            padding: 10px;
+            background: #2c2118;
+            color: #cbae82;
+            padding: 12px;
+        }
+        .hidden {
+            display: none;
         }
         @media (max-width: 550px) {
             .quiz-header {
@@ -195,63 +191,100 @@
                 font-size: 1rem;
             }
         }
-        .hidden {
-            display: none;
+        .music-note {
+            font-size: 1.2rem;
+            margin-right: 6px;
         }
     </style>
 </head>
 <body>
 <div class="quiz-container" id="quizRoot">
     <div class="quiz-header">
-        <div class="score-box">🏆 БАЛЛЫ: <span id="scoreValue">0</span> / <span id="totalQuestionsSpan">4</span></div>
+        <div class="score-box">🎵 БАЛЛЫ: <span id="scoreValue">0</span> / <span id="totalQuestionsSpan">6</span></div>
         <div class="timer-box" id="timerDisplay">05:00</div>
     </div>
     <div id="quizDynamicArea">
-        <!-- динамически: вопросы или результат -->
+        <!-- динамическая загрузка вопросов / результатов -->
     </div>
-    <footer>📜 Станция «Люди Науки» · Ответ единожды, балл засчитывается сразу</footer>
+    <footer>🎶 Станция «Музыкальная» — определи физическое явление. Каждый ответ — сразу балл и переход ➡️</footer>
 </div>
 
 <script>
-    // ---------- ДАННЫЕ ВОПРОСОВ (станция Люди Науки) ----------
-    // В скобках в конце вопроса дан правильный ответ (в тексте вопроса)
-    // Но для надёжности извлекаем соответствие.
-    // Создадим массив объектов с вопросом, вариантами (4 варианта) и правильным ответом.
-    // Варианты формируем логически на основе биографий, чтобы тест был интересным.
+    // ---------- ДАННЫЕ ВОПРОСОВ (Музыкальная станция) ----------
+    // Вопросы с песнями и правильным физическим явлением (строго по условию)
     const QUESTIONS_DATA = [
         {
-            text: "► Он — один из первых ученых, работавших на войну, и первая жертва войны среди людей науки; круг его научных интересов: математика, механика, оптика, астрономия; с одним из его открытий мы сталкиваемся каждую неделю; он сказал: «Дайте мне точку опоры и я переверну Землю»; по легенде, ему принадлежит возглас «Эврика!», прозвучавший вслед за сделанным им открытием.",
-            correct: "Архимед",
-            options: ["Архимед", "Пифагор", "Евклид", "Аристотель"]
+            text: "🎤 Песенка «Утро начинается…» (известная мелодия из передачи «Утренняя гимнастика» / «Утро начинается с зарядки»). О каком физическом явлении идёт речь?",
+            correct: "вращение Земли вокруг своей оси",
+            options: [
+                "вращение Земли вокруг своей оси",
+                "движение Луны по орбите",
+                "инерция покоя",
+                "центробежная сила"
+            ]
         },
         {
-            text: "► Он жил в IV веке в Италии; занимался физикой и астрономией, изучал движение тел, открыл закон колебаний маятника, создал теорию простых механизмов; создал первый телескоп (зрительную трубу) и наблюдал в него Луну и планеты, обнаружил спутники Юпитера, пятна на Солнце и фазы Венеры; поддерживал и развивал гелиоцентрическую теорию Коперника, за что преследовался инквизицией. На суде он публично отрекся от своих взглядов; его называют «отцом» экспериментальной физики, человеком, от которого начинается физика как наука.",
-            correct: "Галилей",
-            options: ["Галилео Галилей", "Джордано Бруно", "Исаак Ньютон", "Коперник"]
+            text: "🐊 Песня крокодила Гены «Пусть бегут неуклюже…» (Пусть бегут неуклюже пешеходы по лужам...). Какое физическое явление здесь описано?",
+            correct: "механическое движение",
+            options: [
+                "механическое движение",
+                "трение покоя",
+                "испарение воды",
+                "диффузия"
+            ]
         },
         {
-            text: "► Русский ученый, положивший начало разработке общепринятой научной и технической терминологии на русском языке; он первым в России разработал способ получения цветных стекол, вместе со своими учениками создал из этих стекол панораму «Полтавская битва»; он ввел в русский язык слово «физика»; первый русский академик; о нем А.С. Пушкин писал: «Он создал первый русский университет. Он, лучше сказать, был самым первым нашим университетом».",
-            correct: "М.В. Ломоносов",
-            options: ["М.В. Ломоносов", "Д.И. Менделеев", "И.П. Павлов", "Н.И. Лобачевский"]
+            text: "🌫️ Песня «Туман, туман…» (Туман, туман над лесом стелется...). О каком физическом явлении поется?",
+            correct: "конденсация",
+            options: [
+                "конденсация",
+                "испарение",
+                "сублимация",
+                "кристаллизация"
+            ]
         },
         {
-            text: "► Он родился в 1643 г. в Англии; является создателем современного естествознания, прославился трудами по механике, оптике, астрономии, математике; дал определение трем основным принципам механики, открыл закон всемирного тяготения и на его базе разработал теорию движения планет; внес огромный вклад в оптику, впервые разложил белый свет на семь цветов призмой. Он придерживался корпускулярной теории света (свет – это поток частиц); его научное творчество сыграло исключительную роль в развитии физики.",
-            correct: "И. Ньютон",
-            options: ["И. Ньютон", "Р. Гук", "Г. Лейбниц", "Б. Паскаль"]
+            text: "🎶 Песня «Крутится, вертится шар голубой…» (известная дворовая / туристическая). Какое физическое явление описывается?",
+            correct: "вращательное движение",
+            options: [
+                "вращательное движение",
+                "поступательное движение",
+                "колебательное движение",
+                "равномерное прямолинейное движение"
+            ]
+        },
+        {
+            text: "❄️ Песня «Падал белый снег» (Падал белый снег, словно плыл по ветру...). О каком явлении идёт речь?",
+            correct: "сила тяжести",
+            options: [
+                "сила тяжести",
+                "сила трения",
+                "сила упругости",
+                "сила Архимеда"
+            ]
+        },
+        {
+            text: "😂 Песня / звук «Детский смех» (в музыке часто используют семпл детского смеха). С каким физическим явлением связан смех, голос, его распространение?",
+            correct: "звуковые волны",
+            options: [
+                "звуковые волны",
+                "электромагнитные волны",
+                "световые явления",
+                "тепловое излучение"
+            ]
         }
     ];
 
     // Состояние теста
-    let currentIndex = 0;            // 0-3
-    let userAnswers = new Array(QUESTIONS_DATA.length).fill(null); // null = не отвечен
-    let score = 0;                   // количество правильных ответов
-    let testActive = true;           // активен ли тест (не завершен таймером / не нажат финал)
-    let timerSeconds = 300;          // 5 минут = 300 секунд
+    let currentIndex = 0;            
+    let userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
+    let score = 0;                   
+    let testActive = true;           
+    let timerSeconds = 300;          // 5 минут
     let timerInterval = null;
-    let questionLocked = false;      // блокировка кнопок на текущем вопросе после ответа (не даёт исправить)
-    let isFinished = false;           // тест окончен (показываем итог)
+    let questionLocked = false;      
+    let isFinished = false;           
 
-    // DOM элементы
     const quizDynamic = document.getElementById('quizDynamicArea');
     const scoreSpan = document.getElementById('scoreValue');
     const totalSpan = document.getElementById('totalQuestionsSpan');
@@ -259,12 +292,10 @@
     const totalQuestions = QUESTIONS_DATA.length;
     totalSpan.textContent = totalQuestions;
 
-    // Обновить отображение счета на панели
     function updateScoreUI() {
         scoreSpan.textContent = score;
     }
 
-    // Завершить тест по таймеру или при ответе на последний вопрос
     function finishTest(byTimer = false) {
         if (isFinished) return;
         if (timerInterval) {
@@ -273,133 +304,121 @@
         }
         isFinished = true;
         testActive = false;
-        // Показываем итоговый экран с баллами
         renderResultScreen();
     }
 
-    // Функция проверки ответа (вызывается когда пользователь кликает на вариант)
-    // answerText - выбранный текст ответа
     function handleAnswer(selectedAnswer) {
-        // проверяем активность теста и не завершен ли вопрос и не заблокирован ли ответ (уже отвечено)
         if (!testActive || isFinished) return;
-        if (questionLocked) return; // уже дал ответ на этот вопрос
+        if (questionLocked) return;
         if (currentIndex >= totalQuestions) return;
 
         const currentQ = QUESTIONS_DATA[currentIndex];
         const isCorrect = (selectedAnswer === currentQ.correct);
-        // Засчитываем балл мгновенно (один балл за правильный)
+        
         if (isCorrect) {
             score++;
             updateScoreUI();
         }
-        // сохраняем ответ пользователя (для статистики не обязательно, но можно)
+        
         userAnswers[currentIndex] = {
             answer: selectedAnswer,
             isCorrect: isCorrect
         };
-        // Блокируем кнопки на текущем вопросе, чтобы нельзя было изменить ответ
+        
         questionLocked = true;
-        // перерисовываем текущий вопрос в режиме disabled (кнопки неактивны)
-        renderCurrentQuestion();
-
-        // После задержки переключаемся на следующий вопрос (или завершаем тест)
+        renderCurrentQuestion();  // показываем заблокированные кнопки и сообщение
+        
+        // Автоматический переход к следующему вопросу через небольшую задержку
         setTimeout(() => {
-            // Проверяем, не завершился ли тест за время задержки (таймер мог вызвать финиш)
             if (!testActive || isFinished) return;
-            // Переход к следующему вопросу
             if (currentIndex + 1 < totalQuestions) {
-                // следующий вопрос
                 currentIndex++;
-                questionLocked = false;   // снимаем блокировку для нового вопроса
+                questionLocked = false;
                 renderCurrentQuestion();
             } else {
-                // это был последний вопрос, завершаем тест с итогом
+                // последний вопрос, тест завершён
                 finishTest(false);
             }
-        }, 600); // небольшая задержка, чтобы пользователь видел, что ответ засчитан (визуально кнопки становятся неактивными)
+        }, 700);
     }
 
-    // Отрисовка активного вопроса (с возможностью заблокированных кнопок)
     function renderCurrentQuestion() {
         if (isFinished) return;
-        if (!testActive) {
-            // если тест отключён из-за таймера, но не финиш, лучше показать результат
-            if (!isFinished) finishTest(true);
+        if (!testActive && !isFinished) {
+            finishTest(true);
             return;
         }
         if (currentIndex >= totalQuestions) {
             finishTest(false);
             return;
         }
+        
         const q = QUESTIONS_DATA[currentIndex];
-        // создаем HTML
         let optionsHtml = '';
         for (let opt of q.options) {
             const disabledAttr = questionLocked ? 'disabled' : '';
-            optionsHtml += `<button class="option-btn" data-answer="${opt.replace(/"/g, '&quot;')}" ${disabledAttr}>${opt}</button>`;
+            optionsHtml += `<button class="option-btn" data-answer="${escapeHtml(opt)}" ${disabledAttr}>🎵 ${escapeHtml(opt)}</button>`;
         }
+        
+        const messageBlock = questionLocked 
+            ? '<div class="message">✅ Ответ засчитан! Переход к следующему вопросу...</div>' 
+            : '<div class="message">🎧 Выберите одно физическое явление — балл начисляется сразу, изменить ответ нельзя.</div>';
+        
         const html = `
             <div class="question-area">
                 <div class="question-text">${escapeHtml(q.text)}</div>
                 <div class="options-list" id="optionsContainer">
                     ${optionsHtml}
                 </div>
-                ${questionLocked ? '<div class="message">✅ Ответ засчитан! Переход к следующему вопросу...</div>' : '<div class="message">🔍 Выберите один вариант — балл начисляется сразу, ответ изменить нельзя.</div>'}
+                ${messageBlock}
             </div>
         `;
         quizDynamic.innerHTML = html;
-        // навесить обработчики если кнопки не заблокированы
+        
         if (!questionLocked) {
             const btns = document.querySelectorAll('#optionsContainer .option-btn');
             btns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                    e.preventDefault();
                     if (!testActive || isFinished || questionLocked) return;
                     const answerVal = btn.getAttribute('data-answer');
-                    if (answerVal) {
-                        handleAnswer(answerVal);
-                    }
+                    if (answerVal) handleAnswer(answerVal);
                 });
             });
         }
     }
 
-    // Функция финального экрана с итоговыми баллами
     function renderResultScreen() {
         if (timerInterval) clearInterval(timerInterval);
         testActive = false;
         isFinished = true;
+        
         const percent = Math.round((score / totalQuestions) * 100);
         let messageText = '';
-        if (score === totalQuestions) messageText = '🌟 Блестяще! Вы знаете людей науки! 🌟';
-        else if (score >= totalQuestions/2) messageText = '📚 Хороший результат, но можно лучше!';
-        else messageText = '📖 Перечитайте материалы станции и попробуйте снова!';
-
+        if (score === totalQuestions) messageText = '🎼 Идеальный слух на физику! Вы — настоящий мастер! 🎶';
+        else if (score >= totalQuestions/2) messageText = '🎤 Неплохо! Переслушайте хиты и повторите физические явления.';
+        else messageText = '🎧 Попробуйте ещё раз, внимательно вслушиваясь в песни!';
+        
         const resultHtml = `
             <div class="result-screen">
                 <div class="result-box">
-                    <h2>🏁 Тест завершён 🏁</h2>
+                    <h2>🎵 Тест завершён 🎵</h2>
                     <div class="final-score">${score} / ${totalQuestions}</div>
                     <p style="font-size:1.2rem">${messageText}</p>
                     <button class="restart-btn" id="restartTestBtn">🔄 Пройти станцию заново</button>
-                    <div style="margin-top: 20px; font-size:0.9rem;">Спасибо за участие в квесте!</div>
+                    <div style="margin-top: 20px; font-size:0.9rem;">🎶 Музыка и физика — гармония науки!</div>
                 </div>
             </div>
         `;
         quizDynamic.innerHTML = resultHtml;
         const restartBtn = document.getElementById('restartTestBtn');
         if (restartBtn) {
-            restartBtn.addEventListener('click', () => {
-                resetFullTest();
-            });
+            restartBtn.addEventListener('click', () => resetFullTest());
         }
     }
 
-    // Сброс всего теста (перезапуск)
     function resetFullTest() {
-        // останавливаем старый таймер
         if (timerInterval) clearInterval(timerInterval);
-        // сброс переменных
         currentIndex = 0;
         userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
         score = 0;
@@ -408,17 +427,12 @@
         questionLocked = false;
         isFinished = false;
         updateScoreUI();
-        // обновить таймер на панели
         updateTimerDisplay();
-        // запускаем таймер заново
         startTimer();
-        // рендерим первый вопрос
         renderCurrentQuestion();
-        // убрать класс warning
         timerDisplay.classList.remove('warning');
     }
 
-    // Обновление визуального таймера
     function updateTimerDisplay() {
         const mins = Math.floor(timerSeconds / 60);
         const secs = timerSeconds % 60;
@@ -430,21 +444,15 @@
         }
     }
 
-    // Запуск обратного отсчета
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
-            if (!testActive || isFinished) {
-                // если тест закончен - не тикаем
-                return;
-            }
+            if (!testActive || isFinished) return;
             if (timerSeconds <= 1) {
-                // время вышло
                 clearInterval(timerInterval);
                 timerInterval = null;
                 timerSeconds = 0;
                 updateTimerDisplay();
-                // тест заканчивается, показываем итоговые баллы
                 if (!isFinished) {
                     testActive = false;
                     finishTest(true);
@@ -452,16 +460,13 @@
             } else {
                 timerSeconds--;
                 updateTimerDisplay();
-                // дополнительная проверка на случай, если во время тика тест закончили
                 if (!testActive && !isFinished) {
-                    // ситуация если где-то завершили тест, остановим таймер
                     if (timerInterval) clearInterval(timerInterval);
                 }
             }
         }, 1000);
     }
 
-    // вспомогательная функция для экранирования HTML
     function escapeHtml(str) {
         return str.replace(/[&<>]/g, function(m) {
             if (m === '&') return '&amp;';
@@ -473,14 +478,12 @@
         });
     }
 
-    // Инициализация теста
     function initTest() {
         updateScoreUI();
         startTimer();
         renderCurrentQuestion();
     }
-
-    // Стартуем всё при загрузке
+    
     initTest();
 </script>
 </body>
