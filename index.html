@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Квест: Станция «Люди Науки»</title>
+    <title>Квест: Станция «Люди Науки» (рандомные варианты ответов)</title>
     <style>
         * {
             box-sizing: border-box;
-            user-select: none; /* небольшая защита от копирования текста, но не мешает кликам */
+            user-select: none;
         }
         body {
             background: linear-gradient(145deg, #1a3c2c 0%, #0e2a1d 100%);
@@ -19,7 +19,6 @@
             margin: 0;
             padding: 20px;
         }
-        /* основной контейнер */
         .quiz-container {
             max-width: 850px;
             width: 100%;
@@ -31,7 +30,6 @@
             overflow: hidden;
             transition: all 0.2s;
         }
-        /* шапка с таймером и счётом */
         .quiz-header {
             background: #2b2b1f;
             padding: 1rem 2rem;
@@ -80,7 +78,6 @@
             50% { opacity: 0.9; text-shadow: 0 0 3px #ff7b2c; background: #8f3a1f;}
             100% { opacity: 1; }
         }
-        /* область вопроса */
         .question-area {
             padding: 2rem 2rem 1.5rem;
         }
@@ -96,7 +93,6 @@
             box-shadow: inset 0 1px 5px #c0a16b30, 0 6px 12px rgba(0,0,0,0.08);
             border-left: 12px solid #d9a13b;
         }
-        /* варианты ответов */
         .options-list {
             display: flex;
             flex-direction: column;
@@ -129,7 +125,6 @@
             background: #dbceb5;
             border-color: #9b7c4d;
         }
-        /* финальный экран */
         .result-screen {
             padding: 2rem;
             text-align: center;
@@ -209,16 +204,12 @@
     <div id="quizDynamicArea">
         <!-- динамически: вопросы или результат -->
     </div>
-    <footer>📜 Станция «Люди Науки» · Ответ единожды, балл засчитывается сразу</footer>
+    <footer>📜 Станция «Люди Науки» · Ответ единожды, балл засчитывается сразу · Варианты ответов в случайном порядке</footer>
 </div>
 
 <script>
-    // ---------- ДАННЫЕ ВОПРОСОВ (станция Люди Науки) ----------
-    // В скобках в конце вопроса дан правильный ответ (в тексте вопроса)
-    // Но для надёжности извлекаем соответствие.
-    // Создадим массив объектов с вопросом, вариантами (4 варианта) и правильным ответом.
-    // Варианты формируем логически на основе биографий, чтобы тест был интересным.
-    const QUESTIONS_DATA = [
+    // ---------- ОСНОВНЫЕ ДАННЫЕ ВОПРОСОВ (правильные ответы неизменны) ----------
+    const RAW_QUESTIONS = [
         {
             text: "► Он — один из первых ученых, работавших на войну, и первая жертва войны среди людей науки; круг его научных интересов: математика, механика, оптика, астрономия; с одним из его открытий мы сталкиваемся каждую неделю; он сказал: «Дайте мне точку опоры и я переверну Землю»; по легенде, ему принадлежит возглас «Эврика!», прозвучавший вслед за сделанным им открытием.",
             correct: "Архимед",
@@ -241,30 +232,49 @@
         }
     ];
 
-    // Состояние теста
-    let currentIndex = 0;            // 0-3
-    let userAnswers = new Array(QUESTIONS_DATA.length).fill(null); // null = не отвечен
-    let score = 0;                   // количество правильных ответов
-    let testActive = true;           // активен ли тест (не завершен таймером / не нажат финал)
-    let timerSeconds = 300;          // 5 минут = 300 секунд
-    let timerInterval = null;
-    let questionLocked = false;      // блокировка кнопок на текущем вопросе после ответа (не даёт исправить)
-    let isFinished = false;           // тест окончен (показываем итог)
+    // Функция перемешивания массива (Fisher-Yates)
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
 
-    // DOM элементы
+    // Создаём копию вопросов с перемешанными вариантами ответов
+    function buildShuffledQuestions() {
+        return RAW_QUESTIONS.map(q => {
+            const shuffledOpts = shuffleArray([...q.options]);
+            return {
+                text: q.text,
+                correct: q.correct,
+                options: shuffledOpts
+            };
+        });
+    }
+
+    // Инициализируем переменные
+    let QUESTIONS = buildShuffledQuestions();
+    let TOTAL_QS = QUESTIONS.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(TOTAL_QS).fill(null);
+    let score = 0;
+    let testActive = true;
+    let timerSeconds = 300;          // 5 минут
+    let timerInterval = null;
+    let questionLocked = false;
+    let isFinished = false;
+
     const quizDynamic = document.getElementById('quizDynamicArea');
     const scoreSpan = document.getElementById('scoreValue');
     const totalSpan = document.getElementById('totalQuestionsSpan');
     const timerDisplay = document.getElementById('timerDisplay');
-    const totalQuestions = QUESTIONS_DATA.length;
-    totalSpan.textContent = totalQuestions;
+    totalSpan.textContent = TOTAL_QS;
 
-    // Обновить отображение счета на панели
     function updateScoreUI() {
         scoreSpan.textContent = score;
     }
 
-    // Завершить тест по таймеру или при ответе на последний вопрос
     function finishTest(byTimer = false) {
         if (isFinished) return;
         if (timerInterval) {
@@ -273,113 +283,104 @@
         }
         isFinished = true;
         testActive = false;
-        // Показываем итоговый экран с баллами
         renderResultScreen();
     }
 
-    // Функция проверки ответа (вызывается когда пользователь кликает на вариант)
-    // answerText - выбранный текст ответа
     function handleAnswer(selectedAnswer) {
-        // проверяем активность теста и не завершен ли вопрос и не заблокирован ли ответ (уже отвечено)
         if (!testActive || isFinished) return;
-        if (questionLocked) return; // уже дал ответ на этот вопрос
-        if (currentIndex >= totalQuestions) return;
+        if (questionLocked) return;
+        if (currentIndex >= TOTAL_QS) return;
 
-        const currentQ = QUESTIONS_DATA[currentIndex];
+        const currentQ = QUESTIONS[currentIndex];
         const isCorrect = (selectedAnswer === currentQ.correct);
-        // Засчитываем балл мгновенно (один балл за правильный)
+        
         if (isCorrect) {
             score++;
             updateScoreUI();
         }
-        // сохраняем ответ пользователя (для статистики не обязательно, но можно)
+        
         userAnswers[currentIndex] = {
             answer: selectedAnswer,
             isCorrect: isCorrect
         };
-        // Блокируем кнопки на текущем вопросе, чтобы нельзя было изменить ответ
+        
         questionLocked = true;
-        // перерисовываем текущий вопрос в режиме disabled (кнопки неактивны)
         renderCurrentQuestion();
-
-        // После задержки переключаемся на следующий вопрос (или завершаем тест)
+        
         setTimeout(() => {
-            // Проверяем, не завершился ли тест за время задержки (таймер мог вызвать финиш)
             if (!testActive || isFinished) return;
-            // Переход к следующему вопросу
-            if (currentIndex + 1 < totalQuestions) {
-                // следующий вопрос
+            if (currentIndex + 1 < TOTAL_QS) {
                 currentIndex++;
-                questionLocked = false;   // снимаем блокировку для нового вопроса
+                questionLocked = false;
                 renderCurrentQuestion();
             } else {
-                // это был последний вопрос, завершаем тест с итогом
                 finishTest(false);
             }
-        }, 600); // небольшая задержка, чтобы пользователь видел, что ответ засчитан (визуально кнопки становятся неактивными)
+        }, 600);
     }
 
-    // Отрисовка активного вопроса (с возможностью заблокированных кнопок)
     function renderCurrentQuestion() {
         if (isFinished) return;
-        if (!testActive) {
-            // если тест отключён из-за таймера, но не финиш, лучше показать результат
-            if (!isFinished) finishTest(true);
+        if (!testActive && !isFinished) {
+            finishTest(true);
             return;
         }
-        if (currentIndex >= totalQuestions) {
+        if (currentIndex >= TOTAL_QS) {
             finishTest(false);
             return;
         }
-        const q = QUESTIONS_DATA[currentIndex];
-        // создаем HTML
+
+        const q = QUESTIONS[currentIndex];
         let optionsHtml = '';
         for (let opt of q.options) {
             const disabledAttr = questionLocked ? 'disabled' : '';
-            optionsHtml += `<button class="option-btn" data-answer="${opt.replace(/"/g, '&quot;')}" ${disabledAttr}>${opt}</button>`;
+            const escapedOpt = opt.replace(/['"]/g, '&quot;');
+            optionsHtml += `<button class="option-btn" data-answer="${escapedOpt}" ${disabledAttr}>${escapeHtml(opt)}</button>`;
         }
+        
+        const messageHtml = questionLocked 
+            ? '<div class="message">✅ Ответ засчитан! Переход к следующему вопросу...</div>'
+            : '<div class="message">🔍 Выберите один вариант — балл начисляется сразу, ответ изменить нельзя.</div>';
+        
         const html = `
             <div class="question-area">
                 <div class="question-text">${escapeHtml(q.text)}</div>
                 <div class="options-list" id="optionsContainer">
                     ${optionsHtml}
                 </div>
-                ${questionLocked ? '<div class="message">✅ Ответ засчитан! Переход к следующему вопросу...</div>' : '<div class="message">🔍 Выберите один вариант — балл начисляется сразу, ответ изменить нельзя.</div>'}
+                ${messageHtml}
             </div>
         `;
         quizDynamic.innerHTML = html;
-        // навесить обработчики если кнопки не заблокированы
+        
         if (!questionLocked) {
             const btns = document.querySelectorAll('#optionsContainer .option-btn');
             btns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                    e.preventDefault();
                     if (!testActive || isFinished || questionLocked) return;
                     const answerVal = btn.getAttribute('data-answer');
-                    if (answerVal) {
-                        handleAnswer(answerVal);
-                    }
+                    if (answerVal) handleAnswer(answerVal);
                 });
             });
         }
     }
 
-    // Функция финального экрана с итоговыми баллами
     function renderResultScreen() {
         if (timerInterval) clearInterval(timerInterval);
         testActive = false;
         isFinished = true;
-        const percent = Math.round((score / totalQuestions) * 100);
+        
         let messageText = '';
-        if (score === totalQuestions) messageText = '🌟 Блестяще! Вы знаете людей науки! 🌟';
-        else if (score >= totalQuestions/2) messageText = '📚 Хороший результат, но можно лучше!';
+        if (score === TOTAL_QS) messageText = '🌟 Блестяще! Вы знаете людей науки! 🌟';
+        else if (score >= TOTAL_QS/2) messageText = '📚 Хороший результат, но можно лучше!';
         else messageText = '📖 Перечитайте материалы станции и попробуйте снова!';
 
         const resultHtml = `
             <div class="result-screen">
                 <div class="result-box">
                     <h2>🏁 Тест завершён 🏁</h2>
-                    <div class="final-score">${score} / ${totalQuestions}</div>
+                    <div class="final-score">${score} / ${TOTAL_QS}</div>
                     <p style="font-size:1.2rem">${messageText}</p>
                     <button class="restart-btn" id="restartTestBtn">🔄 Пройти станцию заново</button>
                     <div style="margin-top: 20px; font-size:0.9rem;">Спасибо за участие в квесте!</div>
@@ -389,36 +390,30 @@
         quizDynamic.innerHTML = resultHtml;
         const restartBtn = document.getElementById('restartTestBtn');
         if (restartBtn) {
-            restartBtn.addEventListener('click', () => {
-                resetFullTest();
-            });
+            restartBtn.addEventListener('click', () => resetFullTest());
         }
     }
 
-    // Сброс всего теста (перезапуск)
     function resetFullTest() {
-        // останавливаем старый таймер
         if (timerInterval) clearInterval(timerInterval);
-        // сброс переменных
+        // Заново перемешиваем варианты ответов
+        QUESTIONS = buildShuffledQuestions();
+        TOTAL_QS = QUESTIONS.length;
         currentIndex = 0;
-        userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
+        userAnswers = new Array(TOTAL_QS).fill(null);
         score = 0;
         testActive = true;
         timerSeconds = 300;
         questionLocked = false;
         isFinished = false;
+        totalSpan.textContent = TOTAL_QS;
         updateScoreUI();
-        // обновить таймер на панели
         updateTimerDisplay();
-        // запускаем таймер заново
         startTimer();
-        // рендерим первый вопрос
         renderCurrentQuestion();
-        // убрать класс warning
         timerDisplay.classList.remove('warning');
     }
 
-    // Обновление визуального таймера
     function updateTimerDisplay() {
         const mins = Math.floor(timerSeconds / 60);
         const secs = timerSeconds % 60;
@@ -430,21 +425,15 @@
         }
     }
 
-    // Запуск обратного отсчета
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
-            if (!testActive || isFinished) {
-                // если тест закончен - не тикаем
-                return;
-            }
+            if (!testActive || isFinished) return;
             if (timerSeconds <= 1) {
-                // время вышло
                 clearInterval(timerInterval);
                 timerInterval = null;
                 timerSeconds = 0;
                 updateTimerDisplay();
-                // тест заканчивается, показываем итоговые баллы
                 if (!isFinished) {
                     testActive = false;
                     finishTest(true);
@@ -452,35 +441,26 @@
             } else {
                 timerSeconds--;
                 updateTimerDisplay();
-                // дополнительная проверка на случай, если во время тика тест закончили
-                if (!testActive && !isFinished) {
-                    // ситуация если где-то завершили тест, остановим таймер
-                    if (timerInterval) clearInterval(timerInterval);
-                }
             }
         }, 1000);
     }
 
-    // вспомогательная функция для экранирования HTML
     function escapeHtml(str) {
+        if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
-    // Инициализация теста
     function initTest() {
         updateScoreUI();
         startTimer();
         renderCurrentQuestion();
     }
-
-    // Стартуем всё при загрузке
+    
     initTest();
 </script>
 </body>
